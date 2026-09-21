@@ -1,1 +1,1 @@
-# Studying quantum dynamics of spin models
+# Spin_models
