@@ -1,3 +1,6 @@
+!> @file main.f90
+!> @brief main controller program
+!> @author ap
 program main_p
   use test_controller_m
   implicit none
@@ -7,7 +10,7 @@ program main_p
   if (num_args>0) then
     call get_command_argument(1,arg)
     if (trim(adjustl(arg))=="test") then
-      call test_driver()
+      call testing_list()
     else
       write(*,*) "Invalid argument! Execution stopped."
     end if

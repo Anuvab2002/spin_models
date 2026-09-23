@@ -1,5 +1,5 @@
 !> @file global.f90
-!> @brief provides gloval parameters
+!> @brief provides global parameters
 !> @author ap
 module global_m
   double precision, parameter           :: zero=1.0d-8! zero

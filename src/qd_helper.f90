@@ -1,5 +1,5 @@
 !> @file qd_helper.f90
-!> @brief provides different helper routines for performing quantum dynamics
+!> @brief provides different helper routines for quantum dynamics calculations
 !> @author ap
 module qd_helper_m
 contains

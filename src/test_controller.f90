@@ -1,8 +1,11 @@
+!> @file test_controller.f90
+!> @brief controlls tests
+!> @author ap
 module test_controller_m
 contains
-  subroutine test_driver()
+  subroutine testing_list()
     implicit none
     !
     write(*,*) "Hi Po! Reporting from test controller. :-)>"
-  end subroutine test_driver
+  end subroutine testing_list
 end module test_controller_m

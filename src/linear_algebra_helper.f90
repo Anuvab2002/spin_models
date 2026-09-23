@@ -1,3 +1,6 @@
+!> @file linear_algebra_helper_m
+!> @brief provides necessary routines for linear algebra operations
+!> @author ap
 module linear_algebra_helper_m
   use global_m
 contains
@@ -182,7 +185,7 @@ contains
     integer                       :: a_c
     integer                       :: i
     integer                       :: j
-!
+    !
     a_r = size(a_matrix,1)
     a_c = size(a_matrix,2)
     if (a_r .ne. a_c) then
@@ -190,13 +193,13 @@ contains
       herm_stat = .false.
       return
     end if
-!
+    !
     allocate(a_herm_conjg(a_r,a_r)) !square matrix
     call hermitian_conjugate(a_matrix, a_herm_conjg)
-!
+    !
     allocate(diff(a_r,a_r)) !square matrix
     diff = a_matrix - a_herm_conjg
-!
+    !
     call if_null(diff, herm_stat)
   end subroutine check_hermiticity
 !> @brief subroutine for checking whether a matrix is right unitary or not
