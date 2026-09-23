@@ -160,4 +160,192 @@ contains
     a_herm_conjg = conjg(a_transpose)
     deallocate(a_transpose)
   end subroutine hermitian_conjugate
+!> @brief subroutine for checking whether a complex matrix is hermitian or not
+!> @param[in]     a_matrix      input matrix
+!> @param[out]    herm_stat     status for hermiticity
+  subroutine check_hermiticity(a_matrix, herm_stat)
+    implicit none
+    ! io variables
+    complex(8), intent(in)        :: a_matrix(:,:)
+    logical, intent(out)          :: herm_stat
+    ! internal variables
+    complex(8), allocatable       :: a_herm_conjg(:,:)
+    complex(8), allocatable       :: diff(:,:)
+    integer                       :: a_r
+    integer                       :: a_c
+    integer                       :: i
+    integer                       :: j
+!
+    a_r = size(a_matrix,1)
+    a_c = size(a_matrix,2)
+    if (a_r .ne. a_c) then
+      write(*,*) "Execution error! This is not a square matrix so can't be hermitian!"
+      herm_stat = .false.
+      return
+    end if
+!
+    allocate(a_herm_conjg(a_r,a_r)) !square matrix
+    call hermitian_conjugate(a_matrix, a_herm_conjg)
+!
+    allocate(diff(a_r,a_r)) !square matrix
+    diff = a_matrix - a_herm_conjg
+!
+    call if_null(diff, herm_stat)
+  end subroutine check_hermiticity
+!> @brief subroutine for checking whether a matrix is right unitary or not
+!> @param[in]     a_matrix      input matrix
+!> @param[out]    ru_stat       status for right unitarity
+subroutine right_unitarity_check(a_matrix, ru_stat)
+    use matrix_generator_m
+    implicit none
+    ! io variable
+    complex(8), intent(in)     :: a_matrix(:,:)
+    logical, intent(out)       :: ru_stat
+    ! internal variable
+    complex(8), allocatable    :: a_herm_conjg(:,:)
+    complex(8), allocatable    :: mult(:,:)
+    complex(8), allocatable    :: diff(:,:)
+    complex(8), allocatable    :: identity_matrix(:,:)
+    integer                    :: a_r
+    integer                    :: a_c
+    !
+    a_r = size(a_matrix, 1)
+    a_c = size(a_matrix, 2)
+    if (a_r .ne. a_c) then
+      print*, "Execution error! It's not a square matrix, therefore can't be unitary!"
+      ru_stat = .false.
+      return
+    end if
+    !
+    allocate(a_herm_conjg(a_r,a_c)) !square matrix
+    call hermitian_conjugate(a_matrix, a_herm_conjg)
+    !
+    allocate(mult(a_r,a_c))
+    mult = matmul(a_matrix, a_herm_conjg)
+    !
+    allocate(diff(a_r,a_c))
+    identity_matrix = identity_matrix_complex(a_r)
+    diff = identity_matrix - mult
+    call if_null(diff, ru_stat)
+    deallocate(a_herm_conjg, mult, diff)
+  end subroutine right_unitarity_check
+!> @brief subroutine for checking whether a matrix is left unitary or not
+!> @param[in]     a_matrix      input matrix
+!> @param[out]    lu_stat       status for left unitarity
+  subroutine left_unitarity_check(a_matrix, lu_stat)
+    use matrix_generator_m
+    implicit none
+    ! io variable
+    complex(8), intent(in)     :: a_matrix(:,:)
+    logical, intent(out)       :: lu_stat
+    ! internal variable
+    complex(8), allocatable    :: a_herm_conjg(:,:)
+    complex(8), allocatable    :: mult(:,:)
+    complex(8), allocatable    :: diff(:,:)
+    complex(8), allocatable    :: identity_matrix(:,:)
+    integer                    :: a_r
+    integer                    :: a_c
+    !
+    a_r = size(a_matrix, 1)
+    a_c = size(a_matrix, 2)
+    if (a_r .ne. a_c) then
+      print*, "Execution error! It's not a square matrix, therefore can't be unitary!"
+      lu_stat = .false.
+      return
+    end if
+    !
+    allocate(a_herm_conjg(a_r,a_r)) !square matrix
+    call hermitian_conjugate(a_matrix, a_herm_conjg)
+    !
+    allocate(mult(a_r,a_r))
+    mult = matmul(a_herm_conjg, a_matrix)
+    !
+    allocate(diff(a_r,a_r))
+    identity_matrix = identity_matrix_complex(a_r)
+    diff = abs(identity_matrix - mult)
+    call if_null(diff, lu_stat)
+    deallocate(a_herm_conjg, mult, diff)
+  end subroutine left_unitarity_check
+!> @brief subroutine for checking whether a matrix is unitary or not
+!> @param[in]     a_matrix        input matrix
+!> param[out]     u_stat          status tag for unitarity
+  subroutine unitarity_check(a_matrix, u_stat)
+    implicit none
+    ! io variables
+    complex(8), intent(in)    :: a_matrix(:,:)
+    logical, intent(out)      :: u_stat
+    ! internal variable
+    logical                   :: lu_stat
+    logical                   :: ru_stat
+    !
+    call right_unitarity_check(a_matrix, ru_stat)
+    call left_unitarity_check(a_matrix, lu_stat)
+    !
+    if (ru_stat .and. lu_stat) then
+      u_stat = .true.
+    else
+      u_stat = .false.
+    end if
+  end subroutine unitarity_check
+!> @brief subroutine for checking whether a complex matrix is involutory or not
+!> @param[in]      a_matrix       input matrix
+!> param[out]      invol_stat      status tag for the involutarity
+  subroutine if_involutory(a_matrix, invol_stat)
+    use matrix_generator_m
+    implicit none
+    ! io variables
+    complex(8), intent(in)    :: a_matrix(:,:)
+    logical, intent(out)      :: invol_stat
+    ! internal variable
+    integer                   :: a_dim
+    complex(8), allocatable   :: a_matrix_sq(:,:)
+    complex(8), allocatable   :: diff(:,:)
+    complex(8), allocatable   :: identity(:,:)
+    !
+    if (size(a_matrix,1) .ne. size(a_matrix,2)) then
+      print*, "Execution error! Not a square matrix, so can't be idempotent!"
+      invol_stat = .false.
+      return
+    end if
+    a_dim = size(a_matrix,1)! must be a square matrix
+    !
+    allocate(a_matrix_sq(a_dim,a_dim))
+    a_matrix_sq = matmul(a_matrix,a_matrix)
+    !
+    identity = identity_matrix_complex(a_dim)! idenitity matrix of the same dimensions
+    allocate(diff(a_dim,a_dim))
+    diff = abs(a_matrix_sq - identity)
+    !
+    call if_null(diff, invol_stat)
+    deallocate(a_matrix_sq, identity, diff)
+  end subroutine if_involutory
+!> @brief subroutine for checking whether a matrix is idempotent or not
+!> @param[in]       a_matrix        input matrix
+!> @param[out]      idem_stat       status tag for idempotency
+  subroutine if_idempotent(a_matrix, idem_stat)
+    ! io variables
+    implicit none
+    complex(8), intent(in)   :: a_matrix(:,:)
+    logical, intent(out)     :: idem_stat
+    ! internal variables
+    integer                  :: a_dim
+    complex(8), allocatable  :: a_matrix_sq(:,:)
+    complex(8), allocatable  :: diff(:,:)
+    !
+    if (size(a_matrix,1) .ne. size(a_matrix,2)) then
+      print*, "Execution error! Not a square matrix, so can't be idempotent!"
+      idem_stat = .false.
+      return
+    end if
+    a_dim = size(a_matrix,1)! must be a square matrix
+    !
+    allocate(a_matrix_sq(a_dim,a_dim))
+    a_matrix_sq = matmul(a_matrix,a_matrix)
+    !
+    allocate(diff(a_dim,a_dim))
+    diff = abs(a_matrix_sq - a_matrix)
+    !
+    call if_null(diff, idem_stat)
+    deallocate(a_matrix_sq, diff)
+  end subroutine if_idempotent
 end module linear_algebra_helper_m
