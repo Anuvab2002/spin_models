@@ -4,6 +4,7 @@ contains
 !> @brief subroutine for checking whether a complex matrix is null or not
 !> @param[in]     a_matrix        input matrix
 !> @param[out]    null_status     status of whether the matrix is null or not
+!> @todo unit testing
   subroutine if_null_c(a_matrix, null_status)
     implicit none
     ! io variables
@@ -25,6 +26,7 @@ contains
 !> @brief subroutine for calculating the trace of a complex matrix
 !> @param[in]     a_matrix      input matrix
 !> @param[out]    a_trace       trace of the matrix
+!> @todo unit testing
   subroutine calculate_trace_c(a_matrix, a_trace)
     implicit none
     ! io variables
@@ -54,6 +56,7 @@ contains
 !> @param[in]   b_matrix      another input matrix
 !> @param[out]  c_matrix      the kronecker product matrix
 !> @todo this subroutine is a bit tidious as it contains for nested loops, and therefore needs more effective implimentation.
+!> @todo unit testing
   subroutine kron_product(a_matrix, b_matrix, c_matrix)
     implicit none
     ! io variables
@@ -88,6 +91,7 @@ contains
 !> @param[out]   eig_vect   the eigen vector matrix
 !> @param[out]   eig_val    the diagonal eigen value matrix
 !> @note LAPACK has been used for this subroutine
+!> @todo unit testing
   subroutine diagonalize_matrix(n_dim, mat, eig_vect, eig_vals)
     implicit none
     ! io variables
@@ -128,6 +132,7 @@ contains
 !> @param[in]     a_matrix      one input matrix
 !> @param[in]     b_matrix      another input matrix
 !> @param[out]    c_matrix      the commutator matrix
+!> @todo unit testing
   subroutine calculate_commutator_c(a_matrix, b_matrix, commutator)
     implicit none
     ! io variables
@@ -141,6 +146,7 @@ contains
 !> @brief subroutine for calculating the hermitian conjugate of a complex matrix
 !> @param[in]    a_matrix       input matrix
 !> @param[out]  a_herm_conjg    hermitian conjugate of the matrix
+!> @todo unit testing
   subroutine hermitian_conjugate(a_matrix, a_herm_conjg)
     implicit none
     ! io variables
@@ -163,6 +169,7 @@ contains
 !> @brief subroutine for checking whether a complex matrix is hermitian or not
 !> @param[in]     a_matrix      input matrix
 !> @param[out]    herm_stat     status for hermiticity
+!> @todo unit testing
   subroutine check_hermiticity(a_matrix, herm_stat)
     implicit none
     ! io variables
@@ -195,7 +202,8 @@ contains
 !> @brief subroutine for checking whether a matrix is right unitary or not
 !> @param[in]     a_matrix      input matrix
 !> @param[out]    ru_stat       status for right unitarity
-subroutine right_unitarity_check(a_matrix, ru_stat)
+!> @todo unit testing
+  subroutine right_unitarity_check(a_matrix, ru_stat)
     use matrix_generator_m
     implicit none
     ! io variable
@@ -232,6 +240,7 @@ subroutine right_unitarity_check(a_matrix, ru_stat)
 !> @brief subroutine for checking whether a matrix is left unitary or not
 !> @param[in]     a_matrix      input matrix
 !> @param[out]    lu_stat       status for left unitarity
+!> @todo unit testing
   subroutine left_unitarity_check(a_matrix, lu_stat)
     use matrix_generator_m
     implicit none
@@ -269,6 +278,7 @@ subroutine right_unitarity_check(a_matrix, ru_stat)
 !> @brief subroutine for checking whether a matrix is unitary or not
 !> @param[in]     a_matrix        input matrix
 !> param[out]     u_stat          status tag for unitarity
+!> @todo unit testing
   subroutine unitarity_check(a_matrix, u_stat)
     implicit none
     ! io variables
@@ -290,6 +300,7 @@ subroutine right_unitarity_check(a_matrix, ru_stat)
 !> @brief subroutine for checking whether a complex matrix is involutory or not
 !> @param[in]      a_matrix       input matrix
 !> param[out]      invol_stat      status tag for the involutarity
+!> @todo unit testing
   subroutine if_involutory(a_matrix, invol_stat)
     use matrix_generator_m
     implicit none
@@ -322,6 +333,7 @@ subroutine right_unitarity_check(a_matrix, ru_stat)
 !> @brief subroutine for checking whether a matrix is idempotent or not
 !> @param[in]       a_matrix        input matrix
 !> @param[out]      idem_stat       status tag for idempotency
+!> @todo unit testing
   subroutine if_idempotent(a_matrix, idem_stat)
     ! io variables
     implicit none
