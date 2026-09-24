@@ -7,7 +7,6 @@ contains
 !> @brief subroutine for checking whether a complex matrix is null or not
 !> @param[in]     a_matrix        input matrix
 !> @param[out]    null_status     status of whether the matrix is null or not
-!> @todo unit testing
   subroutine if_null_c(a_matrix, null_status)
     implicit none
     ! io variables
@@ -29,7 +28,6 @@ contains
 !> @brief subroutine for calculating the trace of a complex matrix
 !> @param[in]     a_matrix      input matrix
 !> @param[out]    a_trace       trace of the matrix
-!> @todo unit testing
   subroutine calculate_trace_c(a_matrix, a_trace)
     implicit none
     ! io variables
@@ -94,7 +92,6 @@ contains
 !> @param[out]   eig_vect   the eigen vector matrix
 !> @param[out]   eig_val    the diagonal eigen value matrix
 !> @note LAPACK has been used for this subroutine
-!> @todo unit testing
   subroutine diagonalize_matrix(n_dim, mat, eig_vect, eig_vals)
     implicit none
     ! io variables
@@ -200,7 +197,7 @@ contains
     allocate(diff(a_r,a_r)) !square matrix
     diff = a_matrix - a_herm_conjg
     !
-    call if_null(diff, herm_stat)
+    call if_null_c(diff, herm_stat)
   end subroutine check_hermiticity
 !> @brief subroutine for checking whether a matrix is right unitary or not
 !> @param[in]     a_matrix      input matrix
@@ -237,7 +234,7 @@ contains
     allocate(diff(a_r,a_c))
     identity_matrix = identity_matrix_complex(a_r)
     diff = identity_matrix - mult
-    call if_null(diff, ru_stat)
+    call if_null_c(diff, ru_stat)
     deallocate(a_herm_conjg, mult, diff)
   end subroutine right_unitarity_check
 !> @brief subroutine for checking whether a matrix is left unitary or not
@@ -275,7 +272,7 @@ contains
     allocate(diff(a_r,a_r))
     identity_matrix = identity_matrix_complex(a_r)
     diff = abs(identity_matrix - mult)
-    call if_null(diff, lu_stat)
+    call if_null_c(diff, lu_stat)
     deallocate(a_herm_conjg, mult, diff)
   end subroutine left_unitarity_check
 !> @brief subroutine for checking whether a matrix is unitary or not
@@ -330,7 +327,7 @@ contains
     allocate(diff(a_dim,a_dim))
     diff = abs(a_matrix_sq - identity)
     !
-    call if_null(diff, invol_stat)
+    call if_null_c(diff, invol_stat)
     deallocate(a_matrix_sq, identity, diff)
   end subroutine if_involutory
 !> @brief subroutine for checking whether a matrix is idempotent or not
@@ -360,7 +357,7 @@ contains
     allocate(diff(a_dim,a_dim))
     diff = abs(a_matrix_sq - a_matrix)
     !
-    call if_null(diff, idem_stat)
+    call if_null_c(diff, idem_stat)
     deallocate(a_matrix_sq, diff)
   end subroutine if_idempotent
 end module linear_algebra_helper_m
