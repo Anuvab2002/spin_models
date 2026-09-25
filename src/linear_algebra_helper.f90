@@ -57,7 +57,6 @@ contains
 !> @param[in]   b_matrix      another input matrix
 !> @param[out]  c_matrix      the kronecker product matrix
 !> @todo this subroutine is a bit tidious as it contains for nested loops, and therefore needs more effective implimentation.
-!> @todo unit testing
   subroutine kron_product(a_matrix, b_matrix, c_matrix)
     implicit none
     ! io variables
@@ -132,7 +131,6 @@ contains
 !> @param[in]     a_matrix      one input matrix
 !> @param[in]     b_matrix      another input matrix
 !> @param[out]    c_matrix      the commutator matrix
-!> @todo unit testing
   subroutine calculate_commutator_c(a_matrix, b_matrix, commutator)
     implicit none
     ! io variables
