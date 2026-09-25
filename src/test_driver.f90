@@ -163,4 +163,48 @@ contains
       test_stat = .true.
     end if
   end subroutine test_diagonalize_matrix
+!> @brief subroutine for testing calculate_commutator_c routine in linear_algebra_helper.f90
+  subroutine test_calculate_commutator_c(test_stat)
+    use global_m
+    use linear_algebra_helper_m
+    use matrix_generator_m
+    use math_helper_m
+    implicit none
+    ! io variables
+    logical, intent(out)          :: test_stat
+    ! internal variable
+    complex(8), dimension(2,2)    :: matp1
+    complex(8), dimension(2,2)    :: matp2
+    complex(8), dimension(2,2)    :: matp3
+    complex(8), allocatable       :: comp12(:,:)
+    complex(8), allocatable       :: comp23(:,:)
+    complex(8), allocatable       :: comp31(:,:)
+    complex(8), dimension(2,2)    :: difp12
+    complex(8), dimension(2,2)    :: difp23
+    complex(8), dimension(2,2)    :: difp31
+    logical                       :: stat1
+    logical                       :: stat2
+    logical                       :: stat3
+    !
+    matp1 =  pauli_matrices(1)
+    matp2 =  pauli_matrices(2)
+    matp3 =  pauli_matrices(3)
+    !
+    call calculate_commutator_c(matp1, matp2, comp12)
+    call calculate_commutator_c(matp2, matp3, comp23)
+    call calculate_commutator_c(matp3, matp1, comp31)
+    !
+    difp12 = comp12 - 2.d0*iota*levi_civita(1,2,3)*matp3
+    difp23 = comp23 - 2.d0*iota*levi_civita(2,3,1)*matp1
+    difp31 = comp31 - 2.d0*iota*levi_civita(3,1,2)*matp2
+    !
+    call if_null_c(difp12, stat1)
+    call if_null_c(difp23, stat2)
+    call if_null_c(difp31, stat3)
+    !
+    test_stat = .false.
+    if (stat1 .and. stat2 .and. stat3) then
+      test_stat = .true.
+    end if
+  end subroutine test_calculate_commutator_c
 end module test_driver_m
