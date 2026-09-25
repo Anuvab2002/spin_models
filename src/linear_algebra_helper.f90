@@ -356,4 +356,54 @@ contains
     call if_null_c(diff, idem_stat)
     deallocate(a_matrix_sq, diff)
   end subroutine if_idempotent
+!> @brief subroutine for matrix inversion
+!> @param[in]       a_mat       input matrix
+!> @param[out]      a_inv       inverse of the matrix
+!> @todo unit testing has to be done
+  subroutine invertmat_complex(a_mat, a_inv)
+    implicit none
+    ! io variable
+    complex(8), dimension(:,:), intent(in)  :: a_mat
+    complex(8), dimension(:,:), intent(out) :: a_inv
+    ! internal variables
+    integer                                 :: n
+    integer                                 :: info
+    integer                                 :: lwork
+    integer, allocatable                    :: ipiv(:)
+    complex(8), allocatable                 :: work(:)
+    real(8)                                 :: workspace_size
+    !
+    n = size(a_mat, 1)
+    ! Copy input matrix to output matrix
+    a_inv = a_mat
+    !
+    allocate(ipiv(n))
+    !
+    call zgetrf(n, n, a_inv, n, ipiv, info)
+    ! Check for errors in LU factorization
+    if (info > 0) then
+      stop "Error: Matrix is numerically singular (LU factorization failed)"
+    else if (info < 0) then
+      stop "Error: Illegal argument in zgetrf"
+    end if
+    ! Workspace query for optimal size
+    lwork = -1
+    allocate(work(1))
+    call zgetri(n, a_inv, n, ipiv, work, lwork, info)
+    workspace_size = real(work(1))
+    deallocate(work)
+    ! Allocate workspace based on the query
+    lwork = int(workspace_size)
+    allocate(work(lwork))
+    ! Compute the inverse
+    call zgetri(n, a_inv, n, ipiv, work, lwork, info)
+    ! Check for errors in matrix inversion
+    if (info > 0) then
+      stop "Error: Matrix inversion failed"
+    else if (info < 0) then
+      stop "Error: Illegal argument in zgetri"
+    end if
+    ! Deallocate workspace and pivot indices
+    deallocate(work, ipiv)
+  end subroutine invertmat_complex
 end module linear_algebra_helper_m
