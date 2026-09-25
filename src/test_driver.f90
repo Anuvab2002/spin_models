@@ -396,4 +396,19 @@ contains
       test_stat = .true.
     end if
   end subroutine test_expectation_value_dis
+!> @brief subroutine for testing factorial function in math_helper.f90
+  subroutine test_factorial(test_stat)
+    use global_m
+    use math_helper_m
+    implicit none
+    ! io variables
+    logical, intent(out)          :: test_stat
+    ! internal variables
+    integer, parameter            :: n = 5
+    !
+    test_stat = .false.
+    if (abs(factorial(n)-120.d0) .le. tol) then
+      test_stat = .true.
+    end if
+  end subroutine test_factorial
 end module test_driver_m

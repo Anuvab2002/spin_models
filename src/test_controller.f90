@@ -104,6 +104,16 @@ contains
     end if
     call test_banner_footer(testname)
     !---------------------------------------------
+    testname = "factorial"
+    call test_banner_header(testname)
+    call test_factorial(test_stat)
+    if (test_stat) then
+      write(*,*) "factorial passed."
+    else
+      write(*,*) "factorial failed."
+    end if
+    call test_banner_footer(testname)
+    !---------------------------------------------
     write(*,*) "==============================================================================="
   end subroutine testing_list
 end module test_controller_m
