@@ -88,7 +88,7 @@ contains
   end function
 !> @brief function to calculate time-evolved wavefunction using Crank-Nicolson method
 !> @param[in]       psi_old       wave function at previous time step
-!> @param[in]       generator    generator operator
+!> @param[in]       generator     generator operator
 !> @param[in]       dt            time step
 !> @return          psi_new       wave function at this time step
 !> @todo unit testing to be done
@@ -138,5 +138,45 @@ contains
     deallocate(u_plus_inv)
     deallocate(propagator)
   end function crank_nicolson_evolution
-!> 
+!> @brief function for calculating time evolved wavefunction in interaction picture
+!> @param[in]       psi_old         wavefunction in the previous timestep
+!> @param[in]       ham_0           time independent part of the Hamiltonian
+!> @param[in]       v_s             time dependent potential in scrodinger picture
+!> @param[in]       t               current time point
+!> @param[in]       dt              size of the time step
+!> @param[in]       bch_order       order of bch calculation
+!> @return          psi_new         wavefunction in current time step
+!> @todo  unit testing has to be done
+  function interaction_wavefunction(psi_old, ham_0, v_s, t, dt, bch_order)result(psi_new)
+    use global_m
+    implicit none
+    ! io variables
+    complex(8), dimension(:), intent(in)         :: psi_old
+    complex(8), dimension(:,:), intent(in)       :: ham_0
+    complex(8), dimension(:,:), intent(in)       :: v_s
+    double precision, intent(in)                 :: t
+    double precision, intent(in)                 :: dt
+    integer, intent(in)                          :: bch_order
+    complex(8), allocatable, dimension(:)        :: psi_new
+    ! internal variables
+    complex(8), allocatable, dimension(:,:)      :: v_i
+    integer                                      :: dim
+    !
+    dim = size(psi_old)
+    if (size(ham_0,1).ne.dim .or. size(ham_0,2).ne.dim) then
+      psi_new = cmplx(0.d0, 0.d0)
+      stop "Execution error! Interaction wavefunction can't be calculated due to size mismatch"
+    end if
+    if (size(v_s,1).ne.dim .or. size(v_s,2).ne.dim) then
+      psi_new = cmplx(0.d0, 0.d0)
+      stop "Execution error! Interaction wavefunction can't be calculated due to size mismatch"
+    end if
+    !
+    allocate(v_i(dim,dim))
+    allocate(psi_new(dim))
+    v_i = operator_interaction(v_s, ham_0, t, bch_order)
+    psi_new = crank_nicolson_evolution(psi_old, v_i, dt)
+    deallocate(v_i)
+  end function interaction_wavefunction
+
 end module qd_helper_m
