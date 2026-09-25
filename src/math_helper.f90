@@ -35,10 +35,14 @@ contains
     integer, intent(in)     :: kdx
     double precision        :: epsilon
     !
-    if (idx.lt.jdx .and. jdx.lt.kdx) then
-      epsilon = 1.0d0
-    else if (idx.eq.jdx .or. jdx.eq.kdx .or. kdx.eq.idx) then
+    if (idx.eq.jdx .or. jdx.eq.kdx .or. kdx.eq.idx) then
       epsilon = 0.d0
+    else if (idx.lt.jdx .and. jdx.lt.kdx) then
+      epsilon = 1.d0
+    else if (idx.lt.jdx .and. jdx.gt.kdx .and. idx.gt.kdx) then
+      epsilon = 1.d0
+    else if (idx.gt.jdx .and. jdx.lt.kdx .and. idx.gt.kdx) then
+      epsilon = 1.d0
     else
       epsilon = -1.d0
     end if
