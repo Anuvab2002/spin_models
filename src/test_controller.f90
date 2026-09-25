@@ -63,6 +63,17 @@ contains
       write(*,*) "calculate_commutator_c failed."
     end if
     call test_banner_footer(testname)
+    !---------------------------------------------
+    testname = "check_hermiticity"
+    call test_banner_header(testname)
+    call test_check_hermiticity(test_stat)
+    if (test_stat) then
+      write(*,*) "check_hermiticity passed."
+    else
+      write(*,*) "check_hermiticity failed."
+    end if
+    call test_banner_footer(testname)
+    !---------------------------------------------
     write(*,*) "==============================================================================="
   end subroutine testing_list
 end module test_controller_m

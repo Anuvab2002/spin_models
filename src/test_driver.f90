@@ -207,4 +207,48 @@ contains
       test_stat = .true.
     end if
   end subroutine test_calculate_commutator_c
+!> @brief subroutine for testing  check_hermiticity routine in linear_algebra_helper.f90
+  subroutine test_check_hermiticity(test_stat)
+    use global_m
+    use linear_algebra_helper_m
+    use matrix_generator_m
+    implicit none
+    ! io variables
+    logical, intent(out)            :: test_stat
+    ! internal variables
+    integer, parameter              :: dim=13
+    complex(8), dimension(2,2)      :: mat1
+    complex(8), dimension(2,2)      :: mat2
+    complex(8), dimension(2,2)      :: mat3
+    complex(8), dimension(dim,dim)  :: mat4
+    complex(8), dimension(dim,dim)  :: mat5
+    logical                         :: stat1
+    logical                         :: stat2
+    logical                         :: stat3
+    logical                         :: stat4
+    logical                         :: stat5
+    !
+    mat1 = pauli_matrices(1)
+    mat2 = pauli_matrices(2)
+    mat3 = pauli_matrices(3)
+    mat4 = identity_matrix_complex(dim)
+    mat5 = random_complex_matrix(dim,dim)
+    !
+    stat1 = .false.
+    stat2 = .false.
+    stat3 = .false.
+    stat4 = .false.
+    stat5 = .false.
+    !
+    call check_hermiticity(mat1, stat1)
+    call check_hermiticity(mat2, stat2)
+    call check_hermiticity(mat3, stat3)
+    call check_hermiticity(mat4, stat4)
+    call check_hermiticity(mat5, stat5)
+    !
+    test_stat = .false.
+    if (stat1 .and. stat2 .and. stat3 .and. stat4 .and. .not.stat5) then
+      test_stat = .true.
+    end if
+  end subroutine test_check_hermiticity
 end module test_driver_m
