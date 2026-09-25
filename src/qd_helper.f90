@@ -73,6 +73,7 @@ contains
 !> return              op_i        operator in interaction picture
 !> @unit testing to be done
   function operator_interaction(op_s, ham_0, t, bch_order)result(op_i)
+    use global_m
     use math_helper_m
     implicit none
     ! io variables
@@ -85,4 +86,57 @@ contains
     !
     call bch_c(ham_0*(iota*t/hbar), op_s, bch_order, op_i)
   end function
+!> @brief function to calculate time-evolved wavefunction using Crank-Nicolson method
+!> @param[in]       psi_old       wave function at previous time step
+!> @param[in]       generator    generator operator
+!> @param[in]       dt            time step
+!> @return          psi_new       wave function at this time step
+!> @todo unit testing to be done
+  function crank_nicolson_evolution(psi_old, generator, dt)result(psi_new)
+    use global_m
+    use linear_algebra_helper_m
+    use matrix_generator_m
+    implicit none
+    ! io variables
+    complex(8), dimension(:), intent(in)      :: psi_old
+    complex(8), dimension(:,:), intent(in)    :: generator
+    double precision, intent(in)              :: dt
+    complex(8), allocatable, dimension(:)     :: psi_new
+    ! internal variables
+    integer                                   :: dim
+    complex(8), allocatable, dimension(:,:)   :: id_dim
+    complex(8), allocatable, dimension(:,:)   :: u_plus
+    complex(8), allocatable, dimension(:,:)   :: u_minus
+    complex(8), allocatable, dimension(:,:)   :: u_plus_inv
+    complex(8), allocatable, dimension(:,:)   :: propagator
+    !
+    dim = size(psi_old)
+    allocate(psi_new(dim))
+    if (size(generator,1).ne.dim .or. size(generator,2).ne.dim) then
+      write(*,*) "Execution error! Time evolution stopped due to size inconsistency!"
+      psi_new = cmplx(0.d0,0.d0)
+      return
+    end if
+    !
+    id_dim = identity_matrix_complex(dim)
+    !
+    allocate(u_plus(dim,dim))
+    allocate(u_minus(dim,dim))
+    allocate(u_plus_inv(dim,dim))
+    allocate(propagator(dim,dim))
+    u_plus = id_dim + ((iota*dt)/(hbar*2.d0))*generator
+    u_minus = id_dim - ((iota*dt)/(hbar*2.d0))*generator
+    call invertmat_complex(u_plus, u_plus_inv)
+    !
+    propagator = matmul(u_minus,u_plus_inv)
+    !
+    psi_new = matmul(propagator,psi_old)
+    !
+    deallocate(id_dim)
+    deallocate(u_plus)
+    deallocate(u_minus)
+    deallocate(u_plus_inv)
+    deallocate(propagator)
+  end function crank_nicolson_evolution
+!> 
 end module qd_helper_m
