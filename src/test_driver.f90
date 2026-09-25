@@ -347,4 +347,53 @@ contains
       test_stat = .true.
     end if
   end subroutine test_inner_product_dis
+!
+!> @brief subroutine for testing inner_product_dis routine in qd_helper.f90
+  subroutine test_expectation_value_dis(test_stat)
+    use global_m
+    use qd_helper_m
+    use linear_algebra_helper_m
+    use matrix_generator_m
+    implicit none
+    ! io variables
+    logical, intent(out)              :: test_stat
+    ! internal variables
+    complex(8), dimension(2,2)        :: mat1
+    complex(8), dimension(2,2)        :: mat2
+    complex(8), dimension(2,2)        :: eig1
+    complex(8), dimension(2,2)        :: eig2
+    double precision, dimension(2)    :: eigval1
+    double precision, dimension(2)    :: eigval2
+    complex(8)                        :: val11
+    complex(8)                        :: val12
+    complex(8)                        :: val21
+    complex(8)                        :: val22
+    logical                           :: stat1
+    logical                           :: stat2
+    !
+    mat1 = pauli_matrices(1)
+    mat2 = pauli_matrices(2)
+    !
+    call diagonalize_matrix(2, mat1, eig1, eigval1)
+    call diagonalize_matrix(2, mat2, eig2, eigval2)
+    !
+    val11 = expectation_value_dis(eig1(:,1), mat1)
+    val12 = expectation_value_dis(eig1(:,2), mat1)
+    val21 = expectation_value_dis(eig2(:,1), mat2)
+    val22 = expectation_value_dis(eig2(:,2), mat2)
+    !
+    stat1 = .false.
+    if (abs(real(val11)-eigval1(1)).le.tol .and. abs(real(val12)-eigval1(2)).le.tol) then
+      stat1 = .true.
+    end if
+    stat2 = .false.
+    if (abs(real(val21)-eigval2(1)).le.tol .and. abs(real(val22)-eigval2(2)).le.tol) then
+      stat2 = .true.
+    end if
+    !
+    test_stat = .false.
+    if (stat1 .and. stat2) then
+      test_stat = .true.
+    end if
+  end subroutine test_expectation_value_dis
 end module test_driver_m

@@ -94,6 +94,16 @@ contains
     end if
     call test_banner_footer(testname)
     !---------------------------------------------
+    testname = "expectation_value_dis"
+    call test_banner_header(testname)
+    call test_expectation_value_dis(test_stat)
+    if (test_stat) then
+      write(*,*) "expectation_value_dis passed."
+    else
+      write(*,*) "expectation_value_dis failed."
+    end if
+    call test_banner_footer(testname)
+    !---------------------------------------------
     write(*,*) "==============================================================================="
   end subroutine testing_list
 end module test_controller_m
