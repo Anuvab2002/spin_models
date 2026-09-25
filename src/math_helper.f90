@@ -47,4 +47,22 @@ contains
       epsilon = -1.d0
     end if
   end function levi_civita
+!> @brief function for calculating factorial of an integer
+!> @param[in]         n         input number
+!> @return            n_fact    factorial of the number
+  recursive function factorial(n)result(n_fact)
+    implicit none
+    ! io variables
+    integer, intent(in)             :: n
+    double precision                :: n_fact
+    ! internal variables
+    integer                         :: idx
+    !
+    if (n .eq. 0) then
+      n_fact = 1.d0
+    end if
+    if (n .ge. 1) then
+      n_fact = n*factorial(n-1)
+    end if
+  end function factorial
 end module math_helper_m
