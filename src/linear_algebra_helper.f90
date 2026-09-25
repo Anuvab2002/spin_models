@@ -238,7 +238,6 @@ contains
 !> @brief subroutine for checking whether a matrix is left unitary or not
 !> @param[in]     a_matrix      input matrix
 !> @param[out]    lu_stat       status for left unitarity
-!> @todo unit testing
   subroutine left_unitarity_check(a_matrix, lu_stat)
     use matrix_generator_m
     implicit none
@@ -276,7 +275,6 @@ contains
 !> @brief subroutine for checking whether a matrix is unitary or not
 !> @param[in]     a_matrix        input matrix
 !> param[out]     u_stat          status tag for unitarity
-!> @todo unit testing
   subroutine unitarity_check(a_matrix, u_stat)
     implicit none
     ! io variables

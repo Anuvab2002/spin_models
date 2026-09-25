@@ -20,8 +20,8 @@ contains
     complex(8), allocatable, dimension(:)           :: bra_v
     complex(8), allocatable, dimension(:)           :: ket_v
     !
-    n = size(ket_v)
-    if (size(bra_v).ne.n) then
+    n = size(v_1)
+    if (size(v_2).ne.n) then
       write(*,*) "Execution error! Size inconsitency in inner product calculation."
       val = 0.d0
       return
@@ -29,8 +29,9 @@ contains
     !
     allocate(bra_v(n), ket_v(n))
     ket_v = v_2
-    bra_v = conjg(v_2)
+    bra_v = v_1
     !
+!> @note dot_product takes care of taking conjugate of the bra vector.
     val = dot_product(bra_v,ket_v)
     deallocate(bra_v, ket_v)
   end function inner_product_dis
@@ -59,7 +60,7 @@ contains
     end if
     !
     allocate(bra_v(n), ket_v(n))
-    bra_v = conjg(state_v)
+    bra_v = state_v
     ket_v = matmul(op_mat, state_v)
     !
     val = dot_product(bra_v,ket_v)
