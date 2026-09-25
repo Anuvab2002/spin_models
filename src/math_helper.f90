@@ -65,4 +65,43 @@ contains
       n_fact = n*factorial(n-1)
     end if
   end function factorial
+!> @brief subroutine for partial Baker-Campbell-Hausdorff calculations of given order
+!> @note e^{A}Be^{-A} = B + [A,B] + 1/2! [A,[A,B]] + 1/3! [A,[A,[A,B]]] + ...
+!> @param[in]     m1      one matrix
+!> @param[in]     m2      another matrix
+!> @param[in]     order   order of the calculation
+!> @return        bch_m   calculated matrix
+!> @todo unit testing to be done.
+  subroutine bch_c(m1, m2, order, bch_m)
+    use linear_algebra_helper_m
+    implicit none
+    ! io variables
+    complex(8), dimension(:,:), intent(in)                   :: m1
+    complex(8), dimension(:,:), intent(in)                   :: m2
+    integer, intent(in)                                      :: order
+    complex(8), allocatable, dimension(:,:), intent(out)     :: bch_m
+    ! internal variable
+    integer                                                  :: idx
+    integer                                                  :: r
+    integer                                                  :: c
+    complex(8), allocatable, dimension(:,:)                  :: temp
+    !
+    r = size(m1,1)
+    c = size(m1,2)
+    if (size(m2,1).ne.r .or. size(m2,2).ne.c) then
+      write(*,*) "Execution error! BCH calculation can't be done due to size mismatch!"
+      bch_m = cmplx(0.d0,0.d0)
+      return
+    end if
+    !
+    allocate(temp(r,c))
+    allocate(bch_m(r,c))
+    temp = m2
+    bch_m = m2
+    do idx = 1,order
+      call calculate_commutator_c(m1, temp, temp)
+      bch_m = bch_m + (1.d0/factorial(order))*temp
+    end do
+    deallocate(temp)
+  end subroutine bch_c
 end module math_helper_m
