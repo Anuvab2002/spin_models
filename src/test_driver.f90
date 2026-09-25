@@ -251,4 +251,100 @@ contains
       test_stat = .true.
     end if
   end subroutine test_check_hermiticity
+!> @brief subroutine for testing unitarity_check in linear_algebra_helper.f90
+  subroutine test_unitarity_check(test_stat)
+    use global_m
+    use linear_algebra_helper_m
+    use matrix_generator_m
+    implicit none
+    ! io variables
+    logical, intent(out)            :: test_stat
+    ! internal variables
+    integer, parameter              :: dim=13
+    complex(8), dimension(2,2)      :: mat1
+    complex(8), dimension(2,2)      :: mat2
+    complex(8), dimension(2,2)      :: mat3
+    complex(8), dimension(dim,dim)  :: mat4
+    complex(8), dimension(dim,dim)  :: mat5
+    logical                         :: stat1
+    logical                         :: stat2
+    logical                         :: stat3
+    logical                         :: stat4
+    logical                         :: stat5
+    !
+    mat1 = pauli_matrices(1)
+    mat2 = pauli_matrices(2)
+    mat3 = pauli_matrices(3)
+    mat4 = identity_matrix_complex(dim)
+    mat5 = random_complex_matrix(dim,dim)
+    !
+    stat1 = .false.
+    stat2 = .false.
+    stat3 = .false.
+    stat4 = .false.
+    stat5 = .false.
+    !
+    call unitarity_check(mat1, stat1)
+    call unitarity_check(mat2, stat2)
+    call unitarity_check(mat3, stat3)
+    call unitarity_check(mat4, stat4)
+    call unitarity_check(mat5, stat5)
+    !
+    test_stat = .false.
+    if (stat1 .and. stat2 .and. stat3 .and. stat4 .and. .not.stat5) then
+      test_stat = .true.
+    end if
+  end subroutine test_unitarity_check
+!> @brief subroutine for testing inner_product_dis routine in qd_helper.f90
+  subroutine test_inner_product_dis(test_stat)
+    use global_m
+    use qd_helper_m
+    use linear_algebra_helper_m
+    use matrix_generator_m
+    implicit none
+    ! io variables
+    logical, intent(out)          :: test_stat
+    ! internal variables
+    complex(8), dimension(2,2)        :: mat1
+    complex(8), dimension(2,2)        :: mat2
+    complex(8), dimension(2,2)        :: eig1
+    complex(8), dimension(2,2)        :: eig2
+    double precision, dimension(2)    :: eigval1
+    double precision, dimension(2)    :: eigval2
+    complex(8)                        :: val11
+    complex(8)                        :: val12
+    complex(8)                        :: val13
+    complex(8)                        :: val21
+    complex(8)                        :: val22
+    complex(8)                        :: val23
+    logical                           :: stat1
+    logical                           :: stat2
+    !
+    mat1 = pauli_matrices(1)
+    mat2 = pauli_matrices(2)
+    !
+    call diagonalize_matrix(2, mat1, eig1, eigval1)
+    call diagonalize_matrix(2, mat2, eig2, eigval2)
+    !
+    val11 = inner_product_dis(eig1(:,1),eig1(:,1))
+    val12 = inner_product_dis(eig1(:,2),eig1(:,2))
+    val13 = inner_product_dis(eig1(:,2),eig1(:,1))
+    val21 = inner_product_dis(eig2(:,1),eig2(:,1))
+    val22 = inner_product_dis(eig2(:,2),eig2(:,2))
+    val23 = inner_product_dis(eig2(:,2),eig2(:,1))
+    !
+    stat1 = .false.
+    if (abs(abs(val11)-1.d0).le.tol .and. abs(abs(val12)-1.d0).le.tol .and. abs(val13).le.tol) then
+      stat1 = .true.
+    end if
+    stat2 = .false.
+    if (abs(abs(val21)-1.d0).le.tol .and. abs(abs(val22)-1.d0).le.tol .and. abs(val23).le.tol) then
+      stat2 = .true.
+    end if
+    !
+    test_stat = .false.
+    if (stat1 .and. stat2) then
+      test_stat = .true.
+    end if
+  end subroutine test_inner_product_dis
 end module test_driver_m
