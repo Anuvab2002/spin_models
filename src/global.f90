@@ -6,4 +6,5 @@ module global_m
   double precision, parameter           :: tol=1.0d-5! tolerance
   complex(8), parameter                 :: iota=(0.d0,1.d0)! iota
   double precision, parameter           :: pi=4.d0*atan(1.d0)! pi
+  double precision, parameter           :: hbar=1.d0! hbar
 end module global_m
