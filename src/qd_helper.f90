@@ -203,5 +203,5 @@ contains
     !
     call calculate_commutator_c(op, ham_0, d_op_dt)
     d_op_dt = d_op_dt*(1.d0/iota*hbar)
-  end function
+  end function heisenberg_eom
 end module qd_helper_m
