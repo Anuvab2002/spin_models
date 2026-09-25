@@ -66,4 +66,23 @@ contains
     val = dot_product(bra_v,ket_v)
     deallocate(bra_v, ket_v)
   end function expectation_value_dis
+!> @brief function for calculating operators in interaction picture
+!> @param[in]          op_s        operator in Schrodinger picture
+!> @param[in]          ham_0       time independent part of the hamiltonian
+!> @param[in]          t           time
+!> return              op_i        operator in interaction picture
+!> @unit testing to be done
+  function operator_interaction(op_s, ham_0, t, bch_order)result(op_i)
+    use math_helper_m
+    implicit none
+    ! io variables
+    complex(8), intent(in), dimension(:,:)      :: op_s
+    complex(8), intent(in), dimension(:,:)      :: ham_0
+    double precision, intent(in)                :: t
+    integer, intent(in)                         :: bch_order
+    complex(8), allocatable, dimension(:,:)     :: op_i
+    ! internal variable
+    !
+    call bch_c(ham_0*(iota*t/hbar), op_s, bch_order, op_i)
+  end function
 end module qd_helper_m
