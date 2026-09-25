@@ -178,5 +178,30 @@ contains
     psi_new = crank_nicolson_evolution(psi_old, v_i, dt)
     deallocate(v_i)
   end function interaction_wavefunction
-
+!> @brief function to impliment Heisenberg's equation of motion
+!> @param[in]     op         operator mtrix
+!> @param[in]     ham_0      time independent Hamiltonian
+!> @return        d_op_dt    time derivative of the oprator
+  function heisenberg_eom(op, ham_0)result(d_op_dt)
+    use global_m
+    use linear_algebra_helper_m
+    implicit none
+    ! io variables
+    complex(8), dimension(:,:), intent(in)      :: op
+    complex(8), dimension(:,:), intent(in)      :: ham_0
+    complex(8), allocatable, dimension(:,:)     :: d_op_dt
+    ! internal variables
+    integer                                     :: r
+    integer                                     :: c
+    !
+    r = size(op,1)
+    c = size(op,2)
+    if (r.ne.c .or. size(ham_0,1).ne.r .or. size(ham_0,2).ne.c) then
+      d_op_dt = cmplx(0.d0, 0.d0)
+      stop "Execution error! Heisenberg EOM calculation faled due to size inconsistency!"
+    end if
+    !
+    call calculate_commutator_c(op, ham_0, d_op_dt)
+    d_op_dt = d_op_dt*(1.d0/iota*hbar)
+  end function
 end module qd_helper_m
